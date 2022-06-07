@@ -1,0 +1,21 @@
+rule Registry_Key_Created_In_Run_RunOnce {
+  meta:
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "Checks for the creation of a registry key in run/runOnce"
+    severity = "High"
+
+  events:
+    $new_key.principal.hostname = $hst
+    $new_key.metadata.event_type = "REGISTRY_MODIFICATION"
+    
+    $new_key.target.registry.registry_key = /.*Software\\Microsoft\\Windows\\CurrentVersion\\Run.*/ nocase or 
+    $new_key.target.registry.registry_key = /.*software\\Microsoft\\Windows NT\\CurrentVersion\\Windows\\Run.*/ nocase or
+    $new_key.target.registry.registry_key = /.*software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run.*/ nocase or
+    $new_key.target.registry.registry_key = /.*software\\Wow6432Node\\Microsoft\\Windows NT\\CurrentVersion\\Windows\\Run.*/ nocase
+    $new_key.target.registry.registry_key = $reg_key
+
+  condition:
+      $new_key
+}
