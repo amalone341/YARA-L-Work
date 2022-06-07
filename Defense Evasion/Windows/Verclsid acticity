@@ -1,0 +1,30 @@
+rule Abnormal_verclsid_activity {
+
+  meta:
+    // https://redcanary.com/blog/verclsid-exe-threat-detection/
+    // https://attack.mitre.org/techniques/T1218/012/
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Experimental"
+    description = "Looks for abnormal activity with verclsid as the launcher"
+    severity = "Medium"
+
+  events:
+      // Notes:
+      // verclsid is not known to be a executable that makes network connections, any such should be malicious until otherwise
+      // verclsid doesn't often launch processes. If it is seen launching something out of ordinary or strange it should be investigated
+    ($e.metadata.event_type = "NETWORK_CONNECTION" and 
+    ($e.principal.process.file.full_path = /.*verclsid.exe.*/ or
+    $e.principal.process.command_line = /.*verclsid.exe.*/))
+    or
+    ($e.metadata.event_type = "PROCESS_LAUNCH" and
+    $e.principal.process.file.full_path = /.*verclsid.exe.*/ )
+
+    // verclsid being launching a COM payload
+    // $e.target.process.command_lin = /.*verclsid.exe.*\/S.*\/C.*/
+
+
+
+  condition:
+    $e
+}
