@@ -9,6 +9,7 @@ rule CHECKER_Outbound_To_Bad_IP {
   events:
     $e.target.ip in %<LIST_OF_IPS>
     
+    // List of internal subnets
     (
     net.ip_in_range_cidr($e.principal.ip, "<CIDR>") or
     net.ip_in_range_cidr($e.principal.ip, "<CIDR>")
