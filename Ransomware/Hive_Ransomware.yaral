@@ -1,0 +1,22 @@
+rule Hive_Ransomware {
+
+  meta:
+    // https://www.varonis.com/blog/hive-ransomware-analysis
+    // Very specific at the moment. Strictly atomic rule
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "Look for commandline activity associated with the hive ransomware crew"
+    severity = "HIGH"
+
+  events:
+
+    // Post exploitation command line steps
+    $e.target.process.command_line = /.*vssadmin\.exe delete shadows \/all \/quiet.*/ nocase or
+    $e.target.process.command_line = /.*net\.exe stop "SamSs" \/y.*/ nocase or
+    $e.target.process.command_line = /.*reg\.exe add.*Microsoft\\Windows Defender" \/v "DisableAntiSpyware" \/t REG_DWORD \/d "1" \/f.*/ nocase or
+    $e.target.process.command_line = /.*wevtutil\.exe cl security.*/ nocase
+
+  condition:
+    $e
+}
