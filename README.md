@@ -5,6 +5,7 @@
 1. [Intro](#intro)
     1. [Data in meta fields](#Data-in-meta-fields)
 2. [Building Blocks](#building-blocks)
+3. [Checker](#checker)
 
 ## Intro
 
@@ -26,4 +27,5 @@ For the non straighforward ones now heres what im going to put in the meta field
 ## Building Blocks
 These are a set of rules that look for possibly suspicious activty. By themselfs they are very noisy but when used in conjuction with each other they might provide good data. For example if one hostname is the cause of 3+ unique block rules it is worth investigating. 
 
-
+## Checker
+Rules for looking for certian IOCs (emails, IPs, hashes, etc.). 
