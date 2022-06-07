@@ -1,0 +1,17 @@
+rule Obfuscated_PS_Command {
+
+  meta:
+    // Ex: https://www.varonis.com/blog/hive-ransomware-analysis
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = " Look for an encoded and hidden PS command being run"
+    severity = "MEDIUM"
+
+  events:
+    $e.metadata.event_type = "PROCESS_LAUNCH"
+    $e.target.process.command_line = /.*powershell.*hidden.*encodedcommand.*/ nocase
+
+  condition:
+    $e
+}
