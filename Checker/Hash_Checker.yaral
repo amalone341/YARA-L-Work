@@ -1,0 +1,40 @@
+rule CHECKER_Hash {
+  meta:
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "Rule to look for hashes. Plug in a list with the corresponding hash type and run"
+    severity = "LOW"
+
+  events:
+   // MD5 hashes
+     $e.principal.file.md5 in %<LIST HERE> or
+     $e.target.file.md5 in %<LIST HERE> or
+     $e.src.file.md5 in %<LIST HERE> or
+     $e.src.process.file.md5 in %<LIST HERE> or
+     $e.target.process.file.md5 in %<LIST HERE> or
+     $e.principal.process.file.md5 in %<LIST HERE> 
+
+    // ( // SHA 1 hashes
+    // $e.principal.file.sha1 in %<LIST HERE> or
+    // $e.target.file.sha1 in %<LIST HERE> or
+    // $e.src.file.sha1 in %<LIST HERE> or
+    // $e.src.process.file.sha1 in %<LIST HERE> or
+    // $e.target.process.file.sha1 in %<LIST HERE> or
+    // $e.principal.process.file.sha1 in %<LIST HERE>
+    // )
+
+    // or
+ 
+    //( // SHA 265 hashes
+    //$e.principal.file.sha256 in %<LIST HERE> or
+    //$e.target.file.sha256 in %<LIST HERE> or
+    //$e.src.file.sha256 in %<LIST HERE> or
+    //$e.src.process.file.sha256 in %<LIST HERE> or
+    //$e.target.process.file.sha256 in %<LIST HERE> or
+    //$e.principal.process.file.sha256 in %<LIST HERE>
+    //)
+
+  condition:
+    $e
+}
