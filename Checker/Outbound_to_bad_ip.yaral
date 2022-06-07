@@ -1,0 +1,19 @@
+rule CHECKER_Outbound_To_Bad_IP {
+  meta:
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "Rule to check for any traffic going to a list of suspicious IP address"
+    severity = "Medium"
+
+  events:
+    $e.target.ip in %<LIST_OF_IPS>
+    
+    (
+    net.ip_in_range_cidr($e.principal.ip, "<CIDR>") or
+    net.ip_in_range_cidr($e.principal.ip, "<CIDR>")
+    )
+
+  condition:
+    $e
+}
