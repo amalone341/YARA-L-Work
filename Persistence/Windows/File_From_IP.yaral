@@ -1,0 +1,45 @@
+rule Scripting_File_Downloaded_from_ip {
+  meta:
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Experimental"
+    description = "Look for a scripting file getting downloaded from a url with just an ip. Could indicate a download from a macro"
+    severity = "Medium"
+
+  events:
+    $e.metadata.event_type = "NETWORK_HTTP"
+    ($e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.bat.*/ nocase or
+    $e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.ps1.*/ nocase or
+    $e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.dll.*/ nocase or
+    $e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.py.*/ nocase or
+    $e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.msi.*/ nocase or
+    $e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.msp.*/ nocase or
+    $e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.vba.*/ nocase or
+    $e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.hta.*/ nocase or
+    $e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.exe.*/ nocase or
+    $e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.cmd.*/ nocase or
+    $e.target.url = /.*\/\/([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}).*\.vbs.*/ nocase)
+    $e.principal.hostname = $hst
+
+    ($file.metadata.event_type = "FILE_CREATION" or
+    $file.metadata.event_type = "FILE_MODIFICATION")
+    $file.principal.hostname = $hst
+    ($file.target.file.full_path = /.*\.exe.*/ nocase or
+    $file.target.file.full_path = /.*\.dll.*/ nocase or
+    $file.target.file.full_path = /.*\.vbs.*/ nocase or
+    $file.target.file.full_path = /.*\.ps1.*/ nocase or
+    $file.target.file.full_path = /.*\.msp.*/ nocase or
+    $file.target.file.full_path = /.*\.msi.*/ nocase or
+    $file.target.file.full_path = /.*\.hta.*/ nocase or
+    $file.target.file.full_path = /.*\.bat.*/ nocase or
+    $file.target.file.full_path = /.*\.cmd.*/ nocase or
+    $file.target.file.full_path = /.*\.vbs.*/ nocase or
+    $file.target.file.full_path = /.*\.vba.*/ nocase or
+    $file.target.file.full_path = /.*\.py.*/ nocase)
+
+  match:
+    $hst over 5m after $e
+
+  condition:
+    $e and $file
+}
