@@ -1,6 +1,6 @@
 rule BLOCK_command_line_recon_behavior {
   meta:
-    // When an attacker first gains access to a machine they will may try and fingerprint it.
+    // When an attacker first gains access to a machine they may try and fingerprint it.
     // These initial access commands sometimes follow the same pattern.
     // The following command will look for a list of these common commands and check to see if more than 5 of them are ran withing a period of time.
 
