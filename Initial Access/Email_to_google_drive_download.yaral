@@ -1,0 +1,44 @@
+rule File_Downloaded_Email_To_Goodle_Drive {
+  meta:
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "Rule that looks for a link clicked from an email followed by a file downloaded from google drive"
+    severity = "LOW"
+
+  events:
+
+    // Link with the safelinks header which indicated opening from a mailbox, either web or local.
+    $safelinks.metadata.event_type = "NETWORK_HTTP"
+    $safelinks.target.url = /.*safelinks\.protection\.outlook.*drive\.google\.com.*file.*/
+    $safelinks.principal.hostname = $hst
+
+    (
+         $safelinks.principal.process.file.full_path = /.*iexplore.exe.*/ nocase or
+         $safelinks.principal.process.file.full_path = /.*chrome.exe.*/ nocase or
+         $safelinks.principal.process.file.full_path = /.*firefox.exe.*/ nocase or
+         $safelinks.principal.process.file.full_path = /.*msedge.exe.*/ nocase
+    )
+
+    // File downloaded onto the system
+    ($file_download.metadata.event_type = "FILE_CREATION" or
+    $file_download.metadata.event_type = "FILE_MODIFICATION")
+    $file_download.principal.hostname = $hst
+    (
+         $file_download.principal.process.file.full_path = /.*iexplore.exe.*/ nocase or
+         $file_download.principal.process.file.full_path = /.*chrome.exe.*/ nocase or
+         $file_download.principal.process.file.full_path = /.*firefox.exe.*/ nocase or
+         $file_download.principal.process.file.full_path = /.*msedge.exe.*/ nocase
+    )
+    $file_download.target.file.full_path = /.*Users.*/ nocase 
+    not $file_download.target.file.full_path = /.*AppData.*/ nocase
+    not $file_download.target.file.full_path = /.*ProgramData.*/ nocase
+   
+
+
+  match:
+      $hst over 5m after $safelinks
+
+  condition:
+    $safelinks and $file_download
+}
