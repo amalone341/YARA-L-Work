@@ -1,0 +1,19 @@
+rule Privilage_Modification_Linux {
+  meta:
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "Looks for a modification to files regarding privilage in Linux"
+    severity = "Medium"
+
+  events:
+    $e.metadata.event_type = "FILE_MODIFICATION"
+
+    ($e.target.file.full_path = /.*etc\/sudoers.*/
+    or $e.target.file.full_path = /.*etc\/group.*/
+    or $e.target.file.full_path = /.*etc\/passwd.*/)
+    
+  condition:
+    $e
+}
+
