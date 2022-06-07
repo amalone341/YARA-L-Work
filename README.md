@@ -17,6 +17,10 @@ For the non straighforward ones now heres what im going to put in the meta field
   * `HIGH`: The activity in this rule indicates activity that should be looked into. These rules may have higher false positive rates.
   * `MEDIUM`: Rule that fingerprints interesting activity associated with TTPs. When in coordination with other MEDIUM rules on the same host/user the activity should be elevated
   * `LOW`: Informational rule or rule to display activity of interest
+* status:
+  * `Experimental`: Rule still needs some testing/tuning to be reliable
+  * `Testing`: Rule is pretty consitent but needs some tuning and review of matches to be reliable
+  * `Stable` : I believe the rule and need to look at it whenever its `high` or `critical`
 
 
 
