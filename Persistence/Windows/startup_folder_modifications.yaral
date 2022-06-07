@@ -1,0 +1,37 @@
+rule Startup_Folder_Modifications {
+  meta:
+    // https://attack.mitre.org/techniques/T1547/001/
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    description = "Rule to detect modifications to the startup folder"
+    severity = "MEDIUM"
+    status = "Testing"
+
+  events:
+    $e.metadata.event_type = "FILE_CREATION" or
+    $e.metadata.event_type = "FILE_MODIFICATION"
+
+    // May need to tune some noise here since a lot can get writen
+    $e.target.file.full_path = /.*Microsoft\\Windows\\Start Menu\\Programs\\Startup.*/ nocase 
+    
+
+    // File has a possibly malicious file extensions
+    // Feel free to remove this if you want all modifications
+    ($e.target.file.full_path = /.*\.exe/ nocase or
+    $e.target.file.full_path = /.*\.scr/ nocase or
+    $e.target.file.full_path = /.*\.vbs/ nocase or
+    $e.target.file.full_path = /.*\.ps1/ nocase or
+    $e.target.file.full_path = /.*\.rtf/ nocase or
+    $e.target.file.full_path = /.*\.msi/ nocase or
+    $e.target.file.full_path = /.*\.jar/ nocase or
+    $e.target.file.full_path = /.*\.bat/ nocase or
+    $e.target.file.full_path = /.*\.cmd/ nocase or
+    $e.target.file.full_path = /.*\.vbs/ nocase or
+    $e.target.file.full_path = /.*\.vbs/ nocase or
+    $e.target.file.full_path = /.*\.rb/ nocase or
+    $e.target.file.full_path = /.*\.ps2/ nocase)
+
+  condition:
+    $e
+}
+
