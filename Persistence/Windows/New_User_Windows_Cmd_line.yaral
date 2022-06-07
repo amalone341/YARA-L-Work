@@ -1,0 +1,22 @@
+rule New_User_Cmd_line_Windows {
+
+  meta:
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "Rule to look for a new user being added via commandline"
+    severity = "HIGH"
+
+  events:
+    $e.metadata.event_type = "PROCESS_LAUNCH"
+
+    // Command line addition of a user, look for cmd and powershell
+    ($e.principal.process.command_line = /.*net user.*\/ADD.*/ nocase or
+    $e.target.process.command_line = /.*net user.*\/ADD.*/ nocase or 
+    $e.principal.process.command_line = /.*New-LocalUser.*/ nocase or
+    $e.target.process.command_line = /.*New-LocalUser.*/ nocase)
+
+
+  condition:
+    $e
+}
