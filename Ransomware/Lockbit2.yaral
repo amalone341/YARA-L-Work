@@ -1,0 +1,55 @@
+rule Lockbit2_Detection {
+  meta:
+    // A rule to detect the lockbit 2.0 ransomware
+    // Goes off the IOC's outlined in
+    // https://www.ic3.gov/Media/News/2022/220204.pdf
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "That ^"
+    severity = "CRITICAL"
+
+  events:
+    ( 
+        $e.metadata.event_type = "PROCESS_LAUNCH" and
+        ($e.principal.process.command_line = /.*vssadmin Delete Shadows.*/ nocase or
+        $e.principal.process.command_line = /.*bcdedit.*recoveryenabled No.*/ nocase or
+        $e.principal.process.command_line = /.*bcdedit.*bootstatuspolicy ignoreallfailures.*/ nocase or
+        $e.principal.process.command_line = /.*wevtutil cl system*/ nocase or
+        $e.principal.process.command_line = /.*wevtutil cl application*/ nocase or
+        $e.principal.process.command_line = /.*wevtutil cl security*/ nocase)
+     )
+      
+
+     or
+
+     ( $e.metadata.event_type = "PROCESS_LAUNCH" and
+        ($e.target.process.command_line = /.*vssadmin Delete Shadows.*/ nocase or
+        $e.target.process.command_line = /.*bcdedit.*recoveryenabled No.*/ nocase or
+        $e.target.process.command_line = /.*bcdedit.*bootstatuspolicy ignoreallfailures.*/ nocase or
+        $e.target.process.command_line = /.*wevtutil cl system*/ nocase or
+        $e.target.process.command_line = /.*wevtutil cl application*/ nocase or
+        $e.target.process.command_line = /.*wevtutil cl security*/ nocase )
+     )
+
+     or
+
+     ( $e.metadata.event_type = "REGISTRY_CREATION" and
+      (
+           $e.target.registry.registry_key = /.*lockbit.*/ nocase or
+           $e.target.registry.registry_key = /.*WOW6432Node\\Microsoft\\WindowsNT\\CurrentVersion\\ICM\\Calibration.*/ 
+       )
+     )
+
+     or
+
+     ( $e.metadata.event_type = "REGISTRY_MODIFICATION" and
+      (
+           $e.target.registry.registry_key = /.*lockbit.*/ nocase or
+           $e.target.registry.registry_key = /.*WOW6432Node\\Microsoft\\WindowsNT\\CurrentVersion\\ICM\\Calibration.*/ 
+       )
+     )
+
+  condition:
+     $e
+}
