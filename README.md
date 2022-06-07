@@ -4,6 +4,7 @@
 
 1. [Intro](#intro)
     1. [Data in meta fields](#Data-in-meta-fields)
+2. [Building Blocks](#building-blocks)
 
 ## Intro
 
