@@ -1,0 +1,59 @@
+rule BLOCK_command_line_recon_behavior {
+  meta:
+    // When an attacker first gains access to a machine they will may try and fingerprint it.
+    // These initial access commands sometimes follow the same pattern.
+    // The following command will look for a list of these common commands and check to see if more than 5 of them are ran withing a period of time.
+
+    // This rule will be very noisy with detections. Use in conjuntion with other BLOCK rules
+    
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "Looks for command line activity for initial reconasance"
+    severity = "LOW"
+
+  events:
+    $e.metadata.event_type = "PROCESS_LAUNCH"
+    $e.principal.hostname = $hst
+     
+     // Variable that tracks the command line values 
+    $e.target.process.command_line = $cmd
+ 
+     // list of commands that are common with initial commands ran for reconasance on the endpoint
+    ($e.target.process.command_line = /.*whoami.*/ or
+    $e.target.process.command_line = /.*ping.*/ or
+    $e.target.process.command_line = /.*ip a.*/ or
+    $e.target.process.command_line = /.*ifconfig.*/ or
+    $e.target.process.command_line = /.*netstat.*/ or
+    $e.target.process.command_line = /.*nmap.*/ or
+    $e.target.process.command_line = /.*nslookup.*/ or
+    $e.target.process.command_line = /.*last.*/ or
+    $e.target.process.command_line = /.*nltest.*/ or
+    $e.target.process.command_line = /.*net group.*/ or
+    $e.target.process.command_line = /.*new view.*/ or
+    $e.target.process.command_line = /.*systeminfo.*/ or
+    $e.target.process.command_line = /.*ipconfig.*/ or
+    $e.target.process.command_line = /.*net config.*/ or
+    $e.target.process.command_line = /.*time.*/ or
+    $e.target.process.command_line = /.*dir.*/ or
+    $e.target.process.command_line = /.*net localgroup.*/ or
+    $e.target.process.command_line = /.*chcp.*/ or
+    $e.target.process.command_line = /.*wmic.*/ or
+    $e.target.process.command_line = /.*Tasklist.*/ or
+    $e.target.process.command_line = /.*net user.*/ or
+    $e.target.process.command_line = /.*net accounts.*/ or
+    $e.target.process.command_line = /.*Task manager.*/ or
+    $e.target.process.command_line = /.*query.*/ or
+    $e.target.process.command_line = /.*dsquery.*/ or
+    $e.target.process.command_line = /.*\/etc\/group.*/ or
+    $e.target.process.command_line = /.*\/etc\/passwd.*/ or
+     $e.target.process.command_line = /.*cat \/etc\/os\-release.*/
+    )
+
+  match:
+    $hst over 5m
+
+  condition:
+      // if more than 5 of the commands above appear within 5 mins fire a detection
+    #cmd > 4
+}
