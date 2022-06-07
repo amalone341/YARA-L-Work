@@ -20,7 +20,7 @@ rule Abnormal_verclsid_activity {
     ($e.metadata.event_type = "PROCESS_LAUNCH" and
     $e.principal.process.file.full_path = /.*verclsid.exe.*/ )
 
-    // verclsid being launching a COM payload
+    // verclsid launching a COM payload
     // $e.target.process.command_lin = /.*verclsid.exe.*\/S.*\/C.*/
 
 
