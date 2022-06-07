@@ -1,0 +1,18 @@
+rule CHECKER_DNS_Requests {
+  meta:
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "Goes through and checks for any dns requests to the hostnames outlined within the reference list below"
+    severity = "LOW"
+
+  events:
+    ($e.metadata.event_type = "NETWORK_CONNECTION" or
+    $e.metadata.event_type = "NETWORK_DNS")
+
+    $e.network.dns.questions.name in %<LIST OF HOSTNAMES>
+
+
+  condition:
+    $e
+}
