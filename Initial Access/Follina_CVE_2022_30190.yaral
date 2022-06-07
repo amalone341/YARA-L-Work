@@ -1,0 +1,33 @@
+
+rule Follina_CVE_2022_30190 {
+  meta:
+     // https://thehackernews.com/2022/05/microsoft-releases-workarounds-for.html
+     // https://doublepulsar.com/follina-a-microsoft-office-code-execution-vulnerability-1a47fce5629e
+     //https://msrc-blog.microsoft.com/2022/05/30/guidance-for-cve-2022-30190-microsoft-support-diagnostic-tool-vulnerability/
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Stable"
+    description = "Looks for msdt getting spawned from office product OR making a network connection"
+    severity = "CRITICAL"
+
+  events:
+    (
+        $e.metadata.event_type = "PROCESS_LAUNCH" and
+        $e.principal.process.file.full_path = /.*Microsoft Office\\Office.*/ nocase and
+        (
+            $e.target.process.file.full_path = /.*msdt\.exe.*/ nocase 
+        or
+            $e.target.process.command_line = /.*msdt\.exe.*/ nocase 
+        )
+    )
+
+    or 
+    
+    (
+        $e.metadata.event_type = "NETWORK_CONNECTION" and
+        $e.principal.process.file.full_path = /.*msdt\.exe/
+    )
+  
+  condition:
+    $e
+}
