@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-1. [Interface Notes](#intro)
+1. [Intro](#intro)
     1. [Data in meta fields](#Data-in-meta-fields)
 
 ## Intro
@@ -22,6 +22,7 @@ For the non straighforward ones now heres what im going to put in the meta field
   * `Testing`: Rule is pretty consitent but needs some tuning and review of matches to be reliable
   * `Stable` : Tuned rule and needs to look at it if there is a detection and its `high` or `critical`
 
-
+## Building Blocks
+These are a set of rules that look for possibly suspicious activty. By themselfs they are very noisy but when used in conjuction with each other they might provide good data. For example if one hostname is the cause of 3+ unique block rules it is worth investigating. 
 
 
