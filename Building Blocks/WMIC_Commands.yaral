@@ -5,7 +5,7 @@ rule BLOCK_WMIC {
     author = "Andy Malone"
     status = "Testing"
     description = "Block rule that looks for 5 or more wmic queries over the course of 5 minutes"
-    severity = "Medium"
+    severity = "LOW"
 
   events:
     $e.target.process.file.full_path = "C:\\WINDOWS\\System32\\wbem\\WMIC.exe"
