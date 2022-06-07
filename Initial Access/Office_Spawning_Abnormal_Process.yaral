@@ -1,0 +1,58 @@
+
+rule Office_to_Abnormal_Process {
+  meta:
+     // ALSO covers CVE-2022-30190
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "Andy Malone"
+    status = "Testing"
+    description = "Looks for office products launching into a possibly malicious executable"
+    severity = "Medium"
+
+  events:
+    $e.metadata.event_type = "PROCESS_LAUNCH" 
+    
+    // Begin list of parent processes:
+    (
+        $e.principal.process.file.full_path = /.*Microsoft Office\\Office.*/ nocase or
+        // Adding notepad because why not
+        $e.principal.process.file.full_path = /.*notepad\.exe*/ nocase
+    )
+
+
+    // Begin list of target processes:
+    // Some may be noisy and will need tuning
+    ((
+        $e.target.process.file.full_path = /.*cmd\.exe/ nocase or
+        $e.target.process.file.full_path = /.*powershell\.exe/ nocase or
+        $e.target.process.file.full_path = /.*mshta\.exe/ nocase or
+        $e.target.process.file.full_path = /.*msiexec\.exe/ nocase or
+        $e.target.process.file.full_path = /.*wscript\.exe/ nocase or
+        $e.target.process.file.full_path = /.*cscript\.exe/ nocase or
+        $e.target.process.file.full_path = /.*RUNDLL32\.exe/ nocase or
+        $e.target.process.file.full_path = /.*regsvr32\.exe.*/ nocase or
+        $e.target.process.file.full_path = /.*cscript\.exe.*/ nocase or
+        $e.target.process.file.full_path = /.*forfiles\.exe.*/ nocase or
+        $e.target.process.file.full_path = /.*msdt\.exe.*/ nocase or
+        $e.target.process.file.full_path = /.*schtasks\.exe/ nocase
+    )
+    or
+    (
+        $e.target.process.command_line  = /.*cmd\.exe/ nocase or
+        $e.target.process.command_line = /.*powershell\.exe/ nocase or
+        $e.target.process.command_line = /.*mshta\.exe/ nocase or
+        $e.target.process.command_line = /.*msiexec\.exe/ nocase or 
+        $e.target.process.command_line = /.*wscript\.exe/ nocase or
+        $e.target.process.command_line = /.*cscript\.exe/ nocase or
+        $e.target.process.command_line = /.*RUNDLL32\.exe/ nocase or 
+        $e.target.process.command_line = /.*regsvr32\.exe.*/ nocase or
+        $e.target.process.command_line = /.*cscript\.exe.*/ nocase or
+        $e.target.process.command_line = /.*forfiles\.exe.*/ nocase or
+        $e.target.process.command_line = /.*msdt\.exe.*/ nocase or
+        $e.target.process.command_line = /.*schtasks\.exe/ nocase
+    ))
+
+
+  
+  condition:
+    $e
+}
