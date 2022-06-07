@@ -20,7 +20,7 @@ For the non straighforward ones now heres what im going to put in the meta field
 * status:
   * `Experimental`: Rule still needs some testing/tuning to be reliable
   * `Testing`: Rule is pretty consitent but needs some tuning and review of matches to be reliable
-  * `Stable` : I believe the rule and need to look at it whenever its `high` or `critical`
+  * `Stable` : Tuned rule and needs to look at it if there is a detection and its `high` or `critical`
 
 
 
