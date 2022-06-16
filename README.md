@@ -32,7 +32,7 @@ These are a set of rules that look for possibly suspicious activty. By themselfs
 Rules for looking for certian IOCs (emails, IPs, hashes, etc.). 
 
 ## Example Rules
-Yara-L provides features to let users create multi-event rules as well as a new outcomes section. The list of the following are rules that are a bit more complex. Good examples of rules to look at for learning:
+Yara-L provides features to let users create multi-event rules as well as a new outcomes section. The following rules are a bit more complex and are good examples of rules to look at for learning:
 * [Using Or For Different Behavior](https://github.com/amalone341/YARA-L-Work/blob/main/Defense%20Evasion/Windows/Verclsid_activity.yaral)
 * [Simple multi event rule](https://github.com/amalone341/YARA-L-Work/blob/main/Initial%20Access/Email_to_google_drive_download.yaral)
 * [Three part multi event](https://github.com/amalone341/YARA-L-Work/blob/main/Malware/Async_Rat_Installation.yaral)
