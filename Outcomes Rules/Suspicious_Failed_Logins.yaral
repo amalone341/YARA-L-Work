@@ -27,14 +27,13 @@ rule AM_Suspicious_Failed_Logins{
   outcome:
     $Total_Fails = count($e.target.user.userid) // count of total failed logins
     $Distinct_Src_IP = count_distinct($e.principal.ip) // Distinct IPs accosiated with login attempts
-    $Distinct_Err = count_distinct($e.security_result.rule_id) // Distinct error types from login attempts
     $Country_distinct_count = count_distinct($e.principal.location.country_or_region) // Distinct countries with UID
-    $Uniq_List_IP = array_distinct($e.principal.ip)
+    $Uniq_List_IP = array_distinct($e.principal.ip) 
      
 
   condition:
       // To Edit the threshhold modify the three numbers. The variables are:
-      //.   pip: number of unique source IP addresses attempting to logsin
+      //.   pip: number of unique source IP addresses attempting to login
       //.   regions: number of unqiue country codes logins have been attempted from
       //.   times: total number of failed logins
     $e and #pip > 3 and #regions > 3 and #times > 30
