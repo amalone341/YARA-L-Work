@@ -3,7 +3,7 @@ rule Scripting_File_Downloaded_from_ip {
     // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
     author = "Andy Malone"
     status = "Experimental"
-    description = "Look for a scripting file getting downloaded from a url with just an ip. Could indicate a download from a macro"
+    description = "Look for a scripting file getting downloaded from a url with just an ip."
     severity = "Medium"
 
   events:
