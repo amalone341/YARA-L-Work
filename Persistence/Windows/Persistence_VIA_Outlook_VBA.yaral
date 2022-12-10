@@ -1,0 +1,39 @@
+rule Persistence_VIA_Outlook_VBA{
+
+  meta:
+      // https://www.mdsec.co.uk/2020/11/a-fresh-outlook-on-mail-based-persistence/
+      // https://www.elastic.co/guide/en/security/current/persistence-via-microsoft-outlook-vba.html
+      /*
+        This rule looks for modifications to the VbaProject.OTM file. This file is used by outlook to automate certain tasks.
+        In theory an adverary could modify this file to start a program every time a certain piece of mail is received. 
+      */
+    author      = "Andrew Malone"
+    description = "Look for persistence through Outlook by installing a rogue VBA template"
+    severity    = "High"
+
+  events:
+      // look for modification to the vba file
+    (
+      ($e.metadata.event_type = "FILE_MODIFICATION" or
+      $e.metadata.event_type = "FILE_CREATION")    
+    
+      and
+   
+      $e.target.file.full_path = /.*Users.*AppData\\Roaming\\Microsoft\\Outlook\\VbaProject.OTM/ nocase
+    ) 
+
+    or
+
+    // check for security level changing
+    ($e.metadata.event_type          = "REGISTRY_MODIFICATION" and 
+     $e.target.registry.registry_key = /.*Outlook\\Security.*/ nocase)
+
+    or
+
+    // key for running on boot
+    ($e.metadata.event_type         = "REGISTRY_MODIFICATION"                and 
+    $e.target.registry.registry_key = /.*Outlook\\LoadMacroProviderOnBoot.*/ nocase)
+
+  condition:
+    $e
+}
