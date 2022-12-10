@@ -3,6 +3,7 @@ rule Persistence_VIA_Outlook_VBA{
   meta:
       // https://www.mdsec.co.uk/2020/11/a-fresh-outlook-on-mail-based-persistence/
       // https://www.elastic.co/guide/en/security/current/persistence-via-microsoft-outlook-vba.html
+      // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
       /*
         This rule looks for modifications to the VbaProject.OTM file. This file is used by outlook to automate certain tasks.
         In theory an adverary could modify this file to start a program every time a certain piece of mail is received. 
