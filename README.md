@@ -15,6 +15,7 @@ The rules may need some tuning. All rules are created and tested by myself. Plea
 
 ## Resources
 The following is a link to a few chronicle resources that I commonly use.
+* [Yara-L Syntax](https://cloud.google.com/chronicle/docs/detection/yara-l-2-0-syntax) Google's Yara-L syntax documentation.
 * [New To Chronicle Series](https://chronicle.security/blog/?filters=new-to-chronicle-series) An in depth writeup on how to begin writing Yara-L rules. Cannot reccomend this series enough for someone trying to learn the language. Great example rules as well for seeing some of the newer capabilities of Yara-L.
 * [List of UDM fields](https://cloud.google.com/chronicle/docs/reference/udm-field-list) List of all UDM fields in the platform. Good link to save as it had all field names and the values for fields which are enumerations.
 * [Graph data](https://cloud.google.com/chronicle/docs/detection/context-aware-analytics#outcome_section) Good examples rules for using some of the context graphs on the platform.
