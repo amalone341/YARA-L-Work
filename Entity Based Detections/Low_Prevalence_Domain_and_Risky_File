@@ -1,0 +1,61 @@
+rule Low_Prevalence_Domain_and_Risky_File {
+
+  meta:
+    author      = "Andrew Malone"
+    description = "Detection to look for a download from a URL which contains a risky file type. Both the Domain and hash should be uncommon"
+    severity    = "Medium"
+    tactic      = "TA0001 - Initial Access"
+    technique   = "T1189 - DriveBy Comprimise, T1608.006 - SEO Poisoning"
+
+  events:
+    //Http request to a URL with a file extension that could be risky
+    $url.metadata.event_type = "NETWORK_HTTP"
+    $url.target.url in regex %Risky_File_types // should be a list of file types like \.exe|\.iso|\.py|\.xlxs|\.bat etc.
+    $url.principal.hostname  = $hst
+    $url.principal.hostname != ""
+
+    //File being created on the endpoint that also has a risky file type
+    $file.metadata.event_type = "FILE_MODIFICATION"
+    $file.target.file.full_path in regex %Risky_File_types
+    $file.principal.hostname = $hst
+    $file.target.process.file.sha256 != ""
+    $hash = $file.target.process.file.sha256
+    $fileName = re.capture($file.target.file.full_path, /.*\\(.*)/)
+
+    // join off of the principal process to match requested URL to low prevalence domain to the file modification
+    $file.principal.process.file.full_path != ""
+    $url.principal.process.file.full_path  != ""
+    $file.principal.process.file.full_path  = $url.principal.process.file.full_path
+
+    //Ensure that the http request happens before the file modification
+    $url.metadata.event_timestamp.seconds <= $file.metadata.event_timestamp.seconds
+   
+    // Graph data for the domain
+    $$url.target.hostname = $d.graph.entity.domain.name
+    $d.graph.metadata.entity_type   = "DOMAIN_NAME"
+    // tune prevalence as fits your results
+    $d.graph.entity.domain.prevalence.rolling_max <= 3
+    $d.graph.entity.domain.prevalence.rolling_max >= 1
+
+    // Graph data for file hash
+    $file.target.process.file.sha256 = $i.graph.entity.file.sha256 
+    $i.graph.metadata.entity_type    = "FILE"
+    // tune prevalence as fits your results
+    $i.graph.entity.file.prevalence.rolling_max <= 3
+    $i.graph.entity.file.prevalence.rolling_max >= 1
+
+  match:
+      $hst over 10m
+
+  outcome:
+      $risk_score = max(
+          // increment risk score based upon rolling_max prevalence
+          if ( $d.graph.entity.domain.prevalence.rolling_max >= 10, 10) +
+          if ( $d.graph.entity.domain.prevalence.rolling_max >= 2 and $d.graph.entity.domain.prevalence.rolling_max <= 9 , 20) +
+          if ( $d.graph.entity.domain.prevalence.rolling_max = 1, 30)
+    )
+    $file_name    = array_distinct($fileName)
+    
+  condition:
+    $url and $file and $d and $i
+}
