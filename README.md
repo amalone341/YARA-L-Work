@@ -7,6 +7,7 @@
 3. [Building Blocks](#building-blocks)
 4. [Checker](#checker)
 5. [Example Rules](#Example-Rules)
+6. [Entity Data](#Entity-Data)
 
 ## Intro
 
