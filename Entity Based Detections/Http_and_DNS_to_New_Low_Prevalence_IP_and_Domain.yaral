@@ -1,0 +1,59 @@
+rule Http_and_DNS_to_New_Low_Prevalence_IP_and_Domain {
+
+  meta:
+    // Odds are this is going to be a bit noisy, you will want to look for something like the URL to filter down by
+    // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author      = "Amalone"
+    description = "Rule that looks for a connection out to a domain/IP that has not been seen before the last month and is low prevalence"
+    severity    = "Medium"
+
+  events:
+
+    //Http request 
+    $http.metadata.event_type = "NETWORK_HTTP"
+    $http.principal.hostname = $hst
+    $http.principal.hostname != ""
+
+    //dns request for the previous HTTP request
+    $dns.metadata.event_type = "NETWORK_DNS"
+    $dns.principal.hostname = $hst
+    $dns.principal.hostname != ""
+    $dns.network.dns.questions.name = $http.target.hostname
+    $dns.network.dns.questions.name != ""
+    $dns.network.dns.answers.data = $ip
+
+    // DNS request before HTTP
+    $dns.metadata.event_timestamp.seconds <= $http.metadata.event_timestamp.seconds
+   
+    // Low prevelence Domain 
+    $dns.network.dns.questions.name = $d.graph.entity.domain.name
+    $d.graph.metadata.entity_type   = "DOMAIN_NAME"
+    // tune prevalence as fits your results
+    $d.graph.entity.domain.prevalence.rolling_max <= 3
+    $d.graph.entity.domain.prevalence.rolling_max >= 1
+    
+    // Low prevelence IP address
+    $k.graph.entity.ip = $ip
+    $k.graph.metadata.entity_type = "IP_ADDRESS"
+    // tune prevalence as fits your results
+    $k.graph.entity.artifact.prevalence.rolling_max <= 9
+    $k.graph.entity.artifact.prevalence.rolling_max >= 1
+
+    // IP has to be seen first in the last month
+    $i.graph.entity.artifact.ip = $ip
+    $i.graph.metadata.entity_type = "IP_ADDRESS"
+    $i.graph.entity.artifact.first_seen_time.seconds >= 0
+    2592000 > timestamp.current_seconds() - $i.graph.entity.artifact.first_seen_time.seconds
+
+    // Domain has to be seen first in the last month
+    $f.graph.entity.artifact.ip = $dns.network.dns.questions.name
+    $f.graph.metadata.entity_type   = "DOMAIN_NAME"
+    $f.graph.entity.domain.first_seen_time.seconds >= 0
+    2592000 > timestamp.current_seconds() - $i.graph.entity.domain.first_seen_time.seconds
+
+  match:
+    $hst over 5m
+    
+  condition:
+    $http and $dns and $d and $k and $i and $f
+}
