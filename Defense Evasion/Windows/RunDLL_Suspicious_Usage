@@ -1,0 +1,47 @@
+rule RunDLL_Suspicious_Usage {
+  meta:
+   // license: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author      = "amalone"
+    description = "Detects usage of rundll32 executable with suspicions functions that are commonly observed with malware to evade detection"
+    severity    = "High"
+    reference   = "https://redcanary.com/threat-detection-report/techniques/rundll32/"
+    mitre       = "T1218.011 - System Binary Proxy Execution - RunDLL32, TA0005 - Defense Evasion"
+
+  events:
+    //Execution of rundll32 with functions StartRun, DLLRegisterServer, or others commonly called with malware
+    (
+        $RunDLL.target.process.command_line = /rundll32.*(StartRun|DLLRegisterServer|MiniDump|StartW)/ nocase
+    )
+    or 
+    // Suspicious process calling rundll32
+    (
+        $RunDLL.principal.process.command_line = /(lsass|taskeng|winlogon|schtask|regsvr32|winprvse|wsmprovhost|wmic|rundll32)/ nocase and
+        $RunDLL.target.process.command_line    = /rundll32/ nocase 
+    )
+    or 
+    //Execution of RunDLL32 without any arguments and instantiates a network connection
+    (
+        $RunDLL.target.process.command_line = /Rundll32\.exe$/     nocase and 
+        $RunDLL.metadata.event_type         = "NETWORK_CONNECTION"   
+    )
+    or 
+    //Uncommon ways that RunDLL32 is executed but are observed with LOLBin on ways to execute malicious DLLs
+    (
+        (
+            $RunDLL.target.process.command_line = /rundll32.*\-sta .*/                                 nocase or 
+            $RunDLL.target.process.command_line = /rundll32\.exe.*[\\]{2}.*\.dll.*EntryPoint/          nocase or 
+            $RunDLL.target.process.command_line = /rundll32\.exe.*WScript\.Shell.*\.Run.*PowerShell.*/ nocase or
+            $RunDLL.target.process.command_line = /rundll32\.exe.*RunHTMLApplication/                  nocase 
+        )
+       
+    )
+
+    $Host  = $RunDLL.principal.hostname 
+    $Host != ""
+    
+  match:
+    $Host over 10m
+
+  condition:
+    $RunDLL
+}
