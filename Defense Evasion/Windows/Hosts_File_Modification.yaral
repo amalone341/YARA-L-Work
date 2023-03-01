@@ -1,0 +1,22 @@
+rule Hosts_File_Modifications {
+
+  meta:
+    author = "amalone"
+    description = "look for a modification to the hosts file in linux or windows"
+    severity = "Medium"
+
+  events:
+    $Hosts.metadata.event_type = "FILE_MODIFICATION" 
+    and 
+    (
+        $Hosts.target.file.full_path = /\\Windows\\System32\\Drivers\\etc\\hosts/ nocase or
+        $Hosts.target.file.full_path = /^\/etc\/hosts$/ nocase
+    )
+     $Hosts.principal.hostname = $Host
+          
+  match:
+    $Host over 5m
+
+  condition:
+    $Hosts
+}
