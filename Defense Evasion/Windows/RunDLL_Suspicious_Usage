@@ -1,7 +1,7 @@
 rule RunDLL_Suspicious_Usage {
   meta:
    // license: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
-    author      = "amalone"
+    author      = "amalone, Doug Scott"
     description = "Detects usage of rundll32 executable with suspicions functions that are commonly observed with malware to evade detection"
     severity    = "High"
     reference   = "https://redcanary.com/threat-detection-report/techniques/rundll32/"
