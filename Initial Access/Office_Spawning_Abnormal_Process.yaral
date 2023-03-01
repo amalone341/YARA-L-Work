@@ -13,9 +13,9 @@ rule Office_to_Abnormal_Process {
     
     // Begin list of parent processes:
     (
-        $e.principal.process.file.full_path = /.*Microsoft Office\\Office.*/ nocase or
+        $e.principal.process.file.full_path = /Microsoft Office.*Office/ nocase or
         // Adding notepad because why not
-        $e.principal.process.file.full_path = /.*notepad\.exe*/ nocase
+        $e.principal.process.file.full_path = /notepad\.exe/ nocase
     )
 
 
