@@ -15,7 +15,7 @@ rule RunDLL_Suspicious_Usage {
     or 
     // Suspicious process calling rundll32
     (
-        $RunDLL.principal.process.command_line = /(lsass|taskeng|winlogon|schtask|regsvr32|winprvse|wsmprovhost|wmic|rundll32)/ nocase and
+        $RunDLL.principal.process.command_line = /(lsass|taskeng|winlogon|schtask|regsvr32|winprvse|wsmprovhost|wmic)/ nocase and
         $RunDLL.target.process.command_line    = /rundll32/ nocase 
     )
     or 
