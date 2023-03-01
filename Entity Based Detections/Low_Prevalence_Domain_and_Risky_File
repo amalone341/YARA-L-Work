@@ -1,6 +1,7 @@
 rule Low_Prevalence_Domain_and_Risky_File {
 
   meta:
+  // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
     author      = "Andrew Malone"
     description = "Detection to look for a download from a URL which contains a risky file type. Both the Domain and hash should be uncommon"
     severity    = "Medium"
