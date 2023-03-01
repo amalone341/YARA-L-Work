@@ -1,0 +1,34 @@
+rule Outlook_to_OneNote {
+
+  meta:
+  // license: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author = "amalone"
+    description = "Look for outlook launching one note or creating a .one file"
+    reference = "https://www.bleepingcomputer.com/news/security/hackers-now-use-microsoft-onenote-attachments-to-spread-malware/"
+    severity = "Medium"
+
+  events:
+    (
+      (
+        $one.metadata.event_type = "FILE_CREATION" or
+        $one.metadata.event_type = "FILE_MODIFICATION"
+      ) 
+      and
+      $one.principal.process.file.full_path = /Microsoft Office\\root\\Office16\\OUTLOOK.EXE/ nocase and
+      $one.target.file.full_path = /\.one$/
+    )
+
+    or
+
+    ($one.metadata.event_type = "PROCESS_LAUNCH" and
+    $one.principal.process.file.full_path = /Microsoft Office\\root\\Office16\\OUTLOOK.EXE/ nocase and
+    $one.target.process.file.full_path = /Microsoft Office\\root\\Office16\\ONENOTE.EXE/ nocase)
+
+    $one.principal.hostname = $hst
+
+  match:
+      $hst over 5m
+
+  condition:
+    $one 
+}
