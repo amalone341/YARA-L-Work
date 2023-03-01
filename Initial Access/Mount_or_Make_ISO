@@ -1,0 +1,34 @@
+rule ASOC_Mount_or_Make_ISO {
+
+  meta:
+  // License: https://github.com/amalone341/YARA-L-Work/blob/main/LICENSE
+    author      = "Andrew Malone, Doug Scott"
+    description = "Detection related to ISO activity such as mounting, process launch initiated by ISO file or modification to files related to ISO file"
+    severity = "Medium"
+
+  events:
+    (
+        $ISO.principal.process.file.full_path  = /mount.*(\.iso|\.vhd|\.vhdx)/ nocase or
+        $ISO.target.process.file.full_path     = /mount.*(\.iso|\.vhd|\.vhdx)/ nocase 
+    )
+    or
+    //Look for processes being launched where ISO file type is the parent process
+    (
+        $ISO.metadata.event_type = "PROCESS_LAUNCH"                   and 
+        $ISO.principal.process.file.full_path  = /(\.iso$|\.vhd$|\.vhdx$)/ nocase
+    )
+    or 
+    //Look for files being modified by ISO file type
+    (
+        $ISO.metadata.event_type = "FILE_MODIFICATION"                and 
+        $ISO.target.file.full_path = /(\.iso$|\.vhd$|\.vhdx$)/  nocase 
+    )
+
+    $Host = $ISO.principal.hostname 
+    
+  match: 
+    $Host over 5m
+
+  condition:
+    $ISO
+}
