@@ -32,7 +32,7 @@ rule Low_Prevalence_Domain_and_Risky_File {
     $url.metadata.event_timestamp.seconds <= $file.metadata.event_timestamp.seconds
    
     // Graph data for the domain
-    $$url.target.hostname = $d.graph.entity.domain.name
+    $url.target.hostname = $d.graph.entity.domain.name
     $d.graph.metadata.entity_type   = "DOMAIN_NAME"
     // tune prevalence as fits your results
     $d.graph.entity.domain.prevalence.rolling_max <= 3
