@@ -14,6 +14,12 @@
 Quick disclaimer: Depending on your organization the UDM fields that these rules look off of may not match up directly.
 The rules may need some tuning. These rules are a collection of ones created by myself or by detection engineers I have worked with. Please use at your own risk. If you think there are any issues with the rules or any requests for Yara-L ones please feel free to reach out. 
 
+## Support
+
+If this is helpful please consider supporting!   
+[![Support via PayPal](https://cdn.jsdelivr.net/gh/twolfson/paypal-github-button@1.0.0/dist/button.svg)](https:///paypal.me/amalone341)  
+[!["Buy Me A Coffee"](https://user-images.githubusercontent.com/1376749/120938564-50c59780-c6e1-11eb-814f-22a0399623c5.png)](https://buymeacoffee.com/amalone341)
+
 ## Resources
 The following is a link to a few chronicle resources that I commonly use.
 * [Yara-L Syntax](https://cloud.google.com/chronicle/docs/detection/yara-l-2-0-syntax) Google's Yara-L syntax documentation.
